@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xmlns:repository="http://www.springframework.org/schema/data/repository"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
+		http://www.springframework.org/schema/data/repository http://www.springframework.org/schema/data/repository/spring-repository-1.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<context:component-scan base-package="org.grozeille.converters"/>
+	<context:component-scan base-package="org.grozeille.listeners"/>
+
+	<mongo:repositories base-package="org.grozeille.dal">
+	</mongo:repositories>
+
+	<!-- Default bean name is 'mongo' -->
+	<mongo:mongo id="mongo" host="localhost" port="27017">
+	</mongo:mongo>
+
+	<mongo:db-factory id="mongoDbFactory" dbname="java" mongo-ref="mongo" />
+
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />
+		<constructor-arg name="mongoConverter" ref="mongoConverter" />
+	</bean>
+
+	<mongo:mapping-converter id="mongoConverter" >
+		<mongo:custom-converters base-package="org.grozeille.converters">
+<!-- 			<mongo:converter ref="localDateReadConverter" /> -->
+<!-- 			<mongo:converter ref="localDateWriteConverter" /> -->
+		</mongo:custom-converters>
+	</mongo:mapping-converter>
+</beans>
